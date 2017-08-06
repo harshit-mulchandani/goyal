@@ -1,0 +1,153 @@
+<div class="row">
+  <div class="col s12 m12 l12">
+    <div class="card">
+      <div class="card-content">
+        <h4 class="card-title center">Settings</h4><br>
+        <div>
+          <span>Change Name<a class="btn waves-effect right" (click)="openeditnamemodal()"><i class="material-icons tiny">edit</i></a></span>
+        </div>
+        <br><br>
+        <div>
+          <span>Change Email Id<a class="btn waves-effect right" (click)="openeditemailmodal()"><i class="material-icons tiny">email</i></a></span>
+        </div>
+        <br><br>
+        <div>
+          <span>Change Password<a class="btn waves-effect right" (click)="openeditpasswordmodal()"><i class="material-icons tiny">vpn_key</i></a></span>
+        </div>
+        <br><br>
+        <hr>
+        <br>
+        <div>
+          <span>Add Warehouse<a class="btn waves-effect right" (click)="openwhmodal()"><i class="material-icons tiny">store</i></a></span>
+        </div>
+        <br><br>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Edit Name Modal-->
+
+<div id="settings-component__edit-name-modal" class="modal" materialize="modal"
+     [materializeParams]="[{dismissible: false}]" [materializeActions]="modalActions">
+  <form [formGroup]="editNameForm" (ngSubmit)="editNameFormSubmit()">
+    <div class="modal-content">
+      <h4 class="center-align">Change Your Name</h4>
+      <div class="input-field col s12 m12 l12">
+        <input id="admin_name" [(ngModel)]="adminName" formControlName="admin_name" type="text" class="validate">
+        <label id="admin_name_label" for="admin_name">Enter New Name</label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a class="waves-effect waves-green btn-flat" (click)="closeeditnamemodal()">Close</a>
+      <button class="btn btn-block modal-action modal-close waves-effect waves-green" type="submit">CHANGE</button>
+    </div>
+  </form>
+  <br>
+</div>
+
+<!--Edit Name Modal-->
+
+
+
+<!--Edit Email Id Modal-->
+
+<div id="settings-component__edit-email-modal" class="modal" materialize="modal"
+     [materializeParams]="[{dismissible: false}]" [materializeActions]="modalActions">
+  <form [formGroup]="editEmailForm" (ngSubmit)="editEmailFormSubmit()">
+    <div class="modal-content">
+      <h4 class="center-align">Change Your Email Id</h4>
+      <div class="input-field col s12 m12 l12">
+        <input id="admin_email" [(ngModel)]="adminEmail"
+               formControlName="admin_email" type="email" class="validate">
+        <label id="admin_email_label" for="admin_email">Enter New Email Id</label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a class="waves-effect waves-green btn-flat" (click)="closeeditemailmodal()">Close</a>
+      <button class="btn btn-block modal-action modal-close waves-effect waves-green" type="submit">CONFIRM</button>
+    </div>
+  </form>
+  <br>
+</div>
+
+<!--Edit Email Modal-->
+
+
+
+<!--Edit Password Modal-->
+
+<div id="settings-component__edit-password-modal" class="modal" materialize="modal"
+     [materializeParams]="[{dismissible: false}]" [materializeActions]="modalActions">
+  <form [formGroup]="editPasswordForm" (ngSubmit)="editPasswordFormSubmit()">
+    <div class="modal-content">
+      <h4 class="center-align">Change Your Password</h4>
+      <div class="input-field col s12 m12 l12">
+        <input id="admin_old_password" formControlName="admin_old_password" type="password" class="validate">
+        <label for="admin_old_password">Enter Old Password</label>
+      </div>
+      <div class="input-field col s12 m12 l12">
+        <input id="admin_new_password" formControlName="admin_new_password" type="password" class="validate">
+        <label for="admin_new_password">Enter New Password</label>
+      </div>
+      <div class="input-field col s12 m12 l12">
+        <input id="admin_re_password" formControlName="admin_re_password" type="password" class="validate">
+        <label for="admin_re_password">Repeat New Password</label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a class="waves-effect waves-green btn-flat" (click)="closeeditpasswordmodal()">Close</a>
+      <a class="btn btn-block modal-action modal-close waves-effect waves-green" type="submit">CHANGE</a>
+    </div>
+    <br>
+  </form>
+</div>
+
+<!--Edit Password Modal-->
+
+
+
+<!--Warehouse Modal-->
+
+<div id="settings-component__wh-modal" class="modal" materialize="modal" [materializeParams]="[{dismissible: false}]"
+     [materializeActions]="modalActions">
+  <form [formGroup]="whForm" (ngSubmit)="whFormSubmit()">
+    <div class="modal-content">
+      <h4 class="center-align">Add Warehouse</h4>
+      <div class="row">
+        <div class="input-field col s12 m12 l12">
+          <input id="wh_warehouse_name" formControlName="wh_warehouse_name" type="text" class="validate"
+                 [(ngModel)]="wh_warehouse_name">
+          <label for="wh_warehouse_name">Warehouse</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12 m12 l12">
+          <input id="wh_email" formControlName="wh_email" type="email" class="validate">
+          <label for="wh_email">Email</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12 m12 l12">
+          <textarea id="wh_address" formControlName="wh_address" class="materialize-textarea"></textarea>
+          <label for="wh_address">Address</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12 m12 l12">
+          <input id="wh_contact" formControlName="wh_contact" type="text" class="validate">
+          <label for="wh_contact">Contact No.</label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a class="waves-effect waves-green btn-flat" (click)="closewhmodal()">Cancel</a>
+      <button class="btn btn-block modal-action modal-close waves-effect waves-green" type="submit"
+              [disabled]="!whForm.valid">Create
+      </button>
+    </div>
+  </form>
+  <br>
+</div>
+
+<!--Warehouse Modal-->

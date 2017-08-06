@@ -1,0 +1,199 @@
+<br>
+<!--Inventory Filter-->
+<div class="row">
+  <!--<div class="input-field col s6 m4 l4 top-space">-->
+    <!--<select id="inventory-component__type-select"   [(ngModel)]="inventoryWarehouse" (change)="netWorthCalculate()" materialize="material_select">-->
+      <!--<option value="" disabled selected>Type</option>-->
+      <!--<option *ngFor="let type of types"-->
+              <!--[value]="type.value">-->
+        <!--{{type.title}}-->
+      <!--</option>-->
+    <!--</select>-->
+    <!--<label for="inventory-component__type-select">Choose Type</label>-->
+  <!--</div>-->
+  <!--<div class="input-field col s6 m4 l4">-->
+  <!--<label for="inventory-component__brand-select">Choose Brand</label>-->
+  <!--<select id="inventory-component__brand-select" materialize="material_select">-->
+  <!--<option value="" disabled selected>Brand</option>-->
+  <!--<option value="1">Audi</option>-->
+  <!--<option value="2">BMW</option>-->
+  <!--</select>-->
+  <!--</div>-->
+  <div class="input-field col s12 m4 l4 top-space">
+    <select class="top-space" id="inventory-component__wh-select" [(ngModel)]="inventoryWarehouse" (change)="netWorthCalculate()" materialize="material_select">
+      <option value="" disabled selected>Choose Warehouse</option>
+      <option *ngFor="let warehouse of warehouseData" [ngValue]="warehouse.wh_id">
+        {{warehouse.wh_warehouse_name}}
+      </option>
+    </select>
+    <label for="inventory-component__wh-select">Choose Warehouse</label>
+  </div>
+  <div class="input-field col l1 s2 m2 refresh-btn">
+      <span role="button" (click)="refreshItemList()"  class="btn-floating blue"><i class="material-icons">refresh</i>Refresh List</span>
+  </div>
+  <div class="col s12 m4 l4 inventory-component__search">
+    <label>Search</label>
+    <div id="demo-2">
+      <input type="search" placeholder="Search" [(ngModel)]="query">
+    </div>
+  </div>
+</div>
+<!--Inventory Filter-->
+<!--Inventory Table-->
+<table class="bordered">
+  <thead>
+  <tr>
+    <th *ngFor="let head of itemTemplate">{{head}}</th>
+  </tr>
+  </thead>
+  <tbody>
+  <!--[ngClass]="{'low-warning': data.item_reorderlevel>=data[inventoryWarehouse]}-->
+  <tr *ngFor="let data of (itemData | search:'item_name':query)">
+    <td *ngIf="data.item_type=='product'">{{data.item_type}}</td>
+    <td *ngIf="data.item_type=='product'">{{data.item_name}}</td>
+    <td *ngIf="data.item_type=='product'">{{data.item_hsn_sac}}</td>
+    <td *ngIf="data.item_type=='product'">Rs. {{data.item_sellingprice}}</td>
+    <td *ngIf="data.item_type=='product'">Rs. {{data.item_purchasingprice}}</td>
+    <td *ngIf="data.item_type=='product'">{{data.item_tax}}</td>
+    <td *ngIf="data.item_type=='product'">
+      <span role="button" (keypress)="openadjustproductmodal();getCurrentProduct_adjust($event)"
+            (click)="openadjustproductmodal();getCurrentProduct_adjust($event)">
+            <i attr.id="{{data.s_no}}" style="color: #01579b" class="material-icons waves-effect adjust_remove_circle">remove_circle</i>
+          </span>{{data[inventoryWarehouse]}}
+      <span role="button" (keypress)="openaddproductmodal();getCurrentProduct_add($event)"
+            (click)="openaddproductmodal();getCurrentProduct_add($event)">
+            <i attr.id="{{data.s_no}}" style="color: #01579b" class="material-icons waves-effect adjust_add_circle">add_circle</i>
+          </span>
+    </td>
+    <td *ngIf="data.item_type=='product'">Rs. {{data[inventoryWarehouse]*data.item_purchasingprice}}
+      <span *ngIf="data.item_reorderlevel>=data[inventoryWarehouse]" >
+      <span class="new badge red adjust_low-warning" data-badge-caption="Stock Low"></span></span>
+    </td>
+
+  </tr>
+  </tbody>
+</table>
+<br>
+<br>
+
+<div class="row">
+  <div class="col l6 m8 s12 offset-l6 offset-m4">
+    <hr>
+    <div class="col l6 m6 s12">
+      <h5>Net Worth</h5>
+    </div>
+    <div class="col l6 m6 s12">
+      <p class="inventory-component__net-worth">Rs. {{netWorth}}</p>
+    </div>
+  </div>
+</div>
+<!--Inventory Table-->
+<!--Product Add Modal-->
+<div id="inventory-component__add-modal" class="modal modal-fixed-footer" materialize="modal" [materializeParams]="[{dismissible: false}]"
+     [materializeActions]="modalActions">
+  <div class="modal-content">
+    <h4 class="center-align">Add Product</h4>
+    <div>
+      <div class="row">
+        <div class="col l4 offset-l1">
+          <span class="text-darken-4"><h5>{{toAdd.item_name}}</h5></span>
+        </div>
+        <div class="col offset-l3" style="margin-top: 2%">
+          <span>Rs. {{toAdd.item_rate}}</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col offset-l1">
+          {{toAdd.item_hsn_sac}}
+        </div>
+      </div>
+      <div>
+        <div class="col l10 offset-l1">
+          <hr>
+        </div>
+      </div>
+      <br>
+      <br>
+      <div class="row">
+        <div class="col l10 offset-l1 left">
+          <strong>Current Quantity: </strong>{{toAdd.item_current_qty}}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer card-footer-background">
+    <span class="activator grey-text text-darken-4">
+      <div class="col offset-l1">
+        <input type="number" min="0" [(ngModel)]="toAdd.item_add_qty">
+      </div>
+      <a class="modal-action modal-close" (click)="addItem()">
+        <i style="color: #03cbcb; margin-right: 11%; margin-top: 1%" class="material-icons right medium">check</i>
+      </a>
+    </span>
+  </div>
+</div>
+<!--Product Add Modal-->
+<!--Remove Product Modal-->
+<div id="inventory-component__adjust-modal" class="modal modal-fixed-footer" materialize="modal" [materializeParams]="[{dismissible: false}]"
+     [materializeActions]="modalActions">
+  <div class="modal-content">
+    <h4 class="center-align">Adjust Product</h4>
+    <div>
+      <div class="row">
+        <div class="col l4 offset-l1">
+          <span class="text-darken-4"><h5>{{toAdjust.item_name}}</h5></span>
+        </div>
+        <div class="col offset-l3" style="margin-top: 2%">
+          <span>Rs. {{toAdjust.item_rate}}</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col offset-l1">
+          {{toAdjust.item_hsn_sac}}
+        </div>
+      </div>
+      <div>
+        <div class="col sm10 m10 l10 offset-l1 offset-m1">
+          <hr>
+        </div>
+      </div>
+      <br>
+      <br>
+      <!--<div class="row">-->
+      <!--<div class="input-field col s12 m6 l6">-->
+      <!--<select id="inventory-component__adjust-wh-select" [(ngModel)]="toAdjust.item_warehouse_id" materialize="material_select"-->
+      <!--(change)="adjustWarehouseChanged()">-->
+      <!--<option value="" disabled selected>Choose Warehouse</option>-->
+      <!--<option *ngFor="let warehouse of warehouseData; let i = index" [ngValue]="warehouse.wh_id">-->
+      <!--{{warehouse.wh_warehouse_name}}-->
+      <!--</option>-->
+      <!--</select>-->
+      <!--</div>-->
+      <!--<div style="margin-top:5%" class="grey-text col l6">Warehouse to which item should be added.</div>-->
+      <!--</div>-->
+      <div class="row">
+        <div class="col s10 m10 l10 offset-l1 offset-m1 left">
+          <strong>Current Quantity: </strong>{{toAdjust.item_current_qty}}
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-field col offset-l1 offset-m1 s10 m10 l10">
+        <label for="inventory-component__adjustment-textarea">Reason for Adjustment</label>
+        <textarea id="inventory-component__adjustment-textarea" class="materialize-textarea"
+                  [(ngModel)]="toAdjust.item_adjust_reason"></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer card-footer-background">
+    <span class="activator grey-text text-darken-4">
+    <div class="col offset-l1">
+      <input type="number" min="0" [(ngModel)]="toAdjust.item_adjust_qty">
+    </div>
+    <a class="modal-action modal-close" (click)="adjustItem()">
+      <i style="color: #03cbcb; margin-right: 11%; margin-top: 1%" class="material-icons right medium">check</i>
+    </a>
+    </span>
+  </div>
+</div>
+<!--Remove Product Modal-->

@@ -1,0 +1,35 @@
+.auth-component__login-card{
+ margin: auto;
+}
+.auth-component__login-form{
+  margin: auto;
+}
+
+i.icon-blue {
+  color: #2196f3;
+}
+.auth-component__card
+{
+  top:45%;
+}
+.auth-component__submit-button{
+  height: 60px;
+  width: 62px;
+  border-radius: 100%;
+}
+.auth-component__login-icon{
+  margin-top: 20%;
+}
+.auth-component__login-form-top-margin{
+  margin-top: 18%;
+}
+.auth-component__login-error-rotate{
+  -ms-transform: rotate(180deg); /* IE 9 */
+  -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
+  transform: rotate(180deg);
+}
+.auth-component__wrong-login{
+  margin: auto;
+  text-align: center;
+}
+

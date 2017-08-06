@@ -1,0 +1,525 @@
+<h3>New Invoice</h3>
+
+<div class="row">
+  <div class="input-field col s4">
+    <input [(ngModel)]="newInvoice" id="first_name2" type="text" class="validate" autofocus="autofocus">
+    <label class="active" for="first_name2">Invoice Number</label>
+  </div>
+  <div class="input-field col s4">
+    <select class="salesperson__choose" [(ngModel)]="salesperson" id="selectPerson" materialize="material_select" (change)="chooseAdditionalSalesperson()">
+      <option value="" disabled selected>Choose Salesperson</option>
+      <option *ngFor="let salesperson of salesperson_list" [ngValue]="salesperson.value">{{salesperson.title}}</option>
+    </select>
+    <label>Salesperson</label>
+  </div>
+  <div *ngIf="additional_salesperson_list[0]!=null" class="input-field col s4">
+    <select  class="additional_salesperson__choose" [(ngModel)]="additional_salesperson" materialize="material_select"  id="selectAdditionalPerson">
+      <option value="" disabled selected>Choose Additional Salesperson</option>
+      <option *ngFor="let additional_salesperson of additional_salesperson_list" [ngValue]="additional_salesperson.value">{{additional_salesperson.title}}</option>
+    </select>
+    <label  for="selectAdditionalPerson">Choose Additional Salesperson</label>
+  </div>
+
+</div>
+<div class="row">
+  <!--<div class="input-field col s4">-->
+    <!--<input type="date" id="invoice__date" class="datepicker">-->
+    <!--<label class="active" for="invoice__date">Invoice Date</label>-->
+  <!--</div>-->
+  <div class="input-field col s4">
+    <input type="text" id="invoice__customer" [(ngModel)]="customer_name">
+    <label class="active" for="invoice__customer">Customer Name</label>
+  </div>
+  <div class="input-field col s4">
+    <input type="number" id="invoice__customer_contact" [(ngModel)]="customer_contact">
+    <label class="active" for="invoice__customer_contact">Contact Number</label>
+  </div>
+
+</div>
+
+<div>
+
+  <ul class="item_list">
+    <li>
+      <div class="col l3">
+        <strong>Item Details</strong>
+      </div>
+      <div class="col l1">
+        <strong>Quantity</strong>
+      </div>
+      <div class="col l1">
+        <strong>M.R.P.</strong>
+      </div>
+      <div class="col l2">
+        <strong>Discount</strong>
+      </div>
+      <div class="col l2">
+        <strong>Tax(%)</strong>
+      </div>
+      <div class="col l2">
+        <strong>Amount</strong>
+      </div>
+    </li>
+
+
+
+
+
+
+    <li  *ngFor="let purchasedItem of purchasedItems;let i=index">
+      <div class="row" attr.id="list_item_{{i}}">
+
+        <div class="col l3">
+          <div class="input-field">
+            <!--<input type="text" id="autocomplete-input" class="autocomplete item-detail" >-->
+            <input attr.id="item_{{i}}_name" (change)="chgProduct($event)" type="text" list="languages" [(ngModel)]="purchasedItems[i].item_name">
+            <datalist  id="languages">
+              <option *ngFor="let item of items"  [value]="item.item_name">
+            </datalist>
+          </div>
+        </div>
+        <!--<div class="col l1">-->
+          <!--<div class="input-field">-->
+            <!--<a class="tooltipped" data-position="top" data-delay="50"-->
+               <!--attr.data-tooltip="Minimum Selling Price: purchasedItems[i].item_minsellingprice">-->
+              <!--<i class="material-icons info-icon-margin">info_outline</i>-->
+            <!--</a>-->
+
+          <!--</div>-->
+        <!--</div>-->
+
+
+        <div class="col l1">
+          <div class="input-field">
+            <input type="number" (change)="reAdjustQuantity($event)" attr.id="item_{{i}}_quantity" [(ngModel)]="purchasedItems[i].item_quantity" min="0" >
+          </div>
+        </div>
+        <div class="col l1">
+          <div class="input-field">
+            <input type="number" min="0" (change)="reAdjustRate($event)" attr.id="item_{{i}}_rate" [(ngModel)]="purchasedItems[i].item_rate">
+          </div>
+        </div>
+        <div class="col l1">
+          <div class="input-field">
+            <input type="number" min="0" (change)="reAdjustDiscount($event)" attr.id="item_{{i}}_discount" [(ngModel)]="purchasedItems[i].item_discount">
+          </div>
+        </div>
+
+        <div class="col l1">
+          <div class="input-field">
+            <select  attr.id="item_{{i}}_select" [(ngModel)]="purchasedItems[i].item_discount_type"  materialize="material_select" (change)="reAdjustDiscountType($event)">
+              <option *ngFor="let option of discount_type_options" [ngValue]="option.value">{{option.title}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col l1">
+          <div class="input-field">
+            <input type="checkbox" attr.id="item_{{i}}_tax_type" (change)="reAdjustTaxType($event)" [(ngModel)]="purchasedItems[i].item_tax_type" />
+            <label attr.for="item_{{i}}_tax_type" *ngIf="purchasedItems[i].item_tax_type==true">Exclusive</label>
+            <label attr.for="item_{{i}}_tax_type" *ngIf="purchasedItems[i].item_tax_type==false">Inclusive</label>
+
+          </div>
+        </div>
+        <div class="col l1">
+          <div class="input-field">
+            <input  min="0" type="number" *ngIf="purchasedItems[i].item_tax_type==false"  attr.id="item_{{i}}_tax" disabled  >
+            <input type="number" min="0" (change)="reAdjustTax($event)" *ngIf="purchasedItems[i].item_tax_type==true"  attr.id="item_{{i}}_tax"  [(ngModel)]="purchasedItems[i].item_tax">
+          </div>
+        </div>
+        <div class="col l2">
+          <div class="input-field">
+            <input type="number" min="0" attr.id="item_{{i}}_amount" [(ngModel)]="purchasedItems[i].item_amount">
+          </div>
+        </div>
+
+
+          <span   role="button" (keypress)="deleteRow($event)" (click)="deleteRow($event)" >
+            <i  attr.id="{{i}}" style="color: red" class="material-icons waves-effect w adjust_remove_circle">remove_circle</i>
+          </span>
+        <a class="tooltipped" data-position="top" data-delay="50" data-tooltip="hey">
+                <!--attr.data-tooltip="Minimum Selling Price: {{purchasedItems[i].item_min_sellingprice}}" -->
+
+            <i class="material-icons waves-effect w info_circle">info_outline</i>
+          </a>
+
+      </div>
+    </li>
+
+
+
+<!------------------------------------                               -------------------------------->
+
+
+    <!------------------------------------                           -------------------------------->
+
+
+
+
+
+
+
+
+
+  </ul>
+</div>
+
+
+
+<div class="row" *ngIf="displayRow">
+
+  <div class="col l3">
+    <div class="input-field">
+      <!--<input type="text" id="autocomplete-input" class="autocomplete item-detail" >-->
+      <input id="details" type="text" list="languages1" [(ngModel)]="toPush.item_name" (keydown)="fetchItemDetails($event)" autofocus>
+      <datalist  id="languages1">
+        <option *ngFor="let item of items" [value]="item.item_name">
+      </datalist>
+    </div>
+  </div>
+
+
+  <div class="col l1">
+    <div class="input-field">
+      <input type="number" [(ngModel)]="toPush.item_quantity" [attr.max]="toPush.item_quantity_available">
+      <div *ngIf="toPush.item_quantity_available!=null && toPush.item_type == 'product'" style="color: red">Available: {{toPush.item_quantity_available}}</div>
+    </div>
+  </div>
+  <div class="col l1">
+    <div class="input-field">
+      <input type="number" min="0" id=item_1_rate [(ngModel)]="toPush.item_rate">
+    </div>
+  </div>
+  <div class="col l1">
+    <div class="input-field">
+      <input type="number" min="0" [(ngModel)]="toPush.item_discount">
+    </div>
+  </div>
+
+  <div class="col l1">
+    <div class="input-field" id="discount_type_selector" >
+      <select [(ngModel)]="toPush.item_discount_type" materialize="material_select" >
+        <option *ngFor="let option of discount_type_options" [ngValue]="option.value" >{{option.title}}</option>
+      </select>
+    </div>
+  </div>
+  <div class="col l1">
+    <div class="input-field">
+
+        <input type="checkbox" id="tax_checkbox" [(ngModel)]="toPush.item_tax_type" />
+        <label for="tax_checkbox" *ngIf="toPush.item_tax_type==true">Exclusive</label>
+        <label for="tax_checkbox" *ngIf="toPush.item_tax_type==false">Inclusive</label>
+
+    </div>
+  </div>
+  <div class="col l1">
+    <div class="input-field">
+
+      <input id="item_tax" *ngIf="toPush.item_tax_type==false"  disabled type="number" min="0" >
+      <input id="item_tax" *ngIf="toPush.item_tax_type==true" type="number" min="0" [(ngModel)]="toPush.item_tax">
+    </div>
+  </div>
+  <div class="col l2">
+    <div class="input-field">
+      <input type="number" min="0" [(ngModel)]="toPush.item_rate*toPush.item_quantity-toPush.item_discount*discount_adjuster*toPush.item_rate*toPush.item_quantity"/>
+      <!--<input type="number" min="0" [(ngModel)]="toPush.item_amount"/>-->
+      <div *ngIf="toPush.item_min_sellingprice!=null">
+        Min: {{toPush.item_min_sellingprice*toPush.item_quantity}}
+      </div>
+    </div>
+  </div>
+
+  <div >
+          <span *ngIf="purchasedItems.length>=1"   role="button" (click)="deleteRow($event)" (keypress)="deleteRow($event)">
+            <i tabindex="0" id="item_list_to_push" style="margin-top: 4%;color: red" class="material-icons adjust_remove_circle">remove_circle</i>
+          </span>
+    <!--<a   class="tooltipped" class="tooltipped" data-position="top" data-delay="50"-->
+         <!--data-tooltip="Add any other +ve or -ve charges that need to be applied to adjust the total invoice amount Eg. +10 or -10." >-->
+      <!--<i class="material-icons waves-effect w info_circle">info_outline</i>-->
+    <!--</a>-->
+    <a id="info-tooltip" class="tooltipped" data-position="top" data-delay="50"
+       *ngIf="toPush.item_min_sellingprice!=null" >
+
+      <i class="material-icons waves-effect w info_circle">info_outline</i>
+    </a>
+
+
+  </div>
+
+</div>
+
+
+
+<br>
+<span id="add-product-btn" tabindex="0" role="button" class="waves-effect waves-light btn add-product" (click)="createRow()"
+      (keypress)="createRow($event)"><i class="material-icons left">playlist_add</i>Add Product</span>
+
+<span id="save-bill-btn" tabindex="0" role="button" class="waves-effect waves-light btn green add-product" (click)="endBill()"
+      (keypress)="endBill()"><i class="material-icons left">done</i>Save</span>
+
+
+<div class="row">
+  <div class="offset-s5 col s2">
+    <strong>Sub Total</strong>
+  </div>
+  <div class="offset-s11 col s1" style="margin-top: -2%; margin-left: 85.5%;">
+    <div>
+      {{subTotal}}
+    </div>
+  </div>
+
+</div>
+<div class="row">
+  <div class="offset-s5 col s7">
+    <hr class="light-horizontal-line">
+  </div>
+</div>
+<div class="row">
+  <div class="offset-s5 col s2" style="margin-top: 1%">
+    <strong>Shipping Charges</strong>
+  </div>
+  <div class="offset-s8 col s1" style="margin-top: -3%">
+    <input type="number" [(ngModel)]="shipping_charge">
+
+  </div>
+  <div class="offset-s11 col s1" style="margin-top: -4%; margin-left: 85.5%;">
+    {{shipping_charge+subTotal}}
+  </div>
+
+</div>
+<div class="row">
+  <div class="offset-s5 col s7">
+    <hr class="light-horizontal-line">
+  </div>
+</div>
+
+<div class="row">
+
+  <!--<div class="offset-s5">-->
+  <!--<i class="material-icons">info_outline</i>-->
+  <!--</div>-->
+
+  <div class="offset-s5 col s2" style="margin-top: 1%">
+
+    <strong><input [(ngModel)]="adjustmentName"></strong>
+  </div>
+  <div class="offset-s5">
+    <a class="tooltipped" data-position="top" data-delay="50"
+       data-tooltip="Add any other +ve or -ve charges that need to be applied to adjust the total invoice amount Eg. +10 or -10.">
+      <i class="material-icons info-icon-margin">info_outline</i>
+    </a>
+
+  </div>
+
+
+  <div class="offset-s8 col s1" style="margin-top: -5.5%">
+    <input type="number" [(ngModel)]="adjustments">
+
+  </div>
+  <div class="offset-s11 col s1" style="margin-top: -5.5%; margin-left: 85.5%;">
+    <input type="number" [(ngModel)]="adjustments+shipping_charge+subTotal">
+  </div>
+
+
+</div>
+
+
+<div class="offset-s5 col s2">
+  <div id="shell">
+    <div id="content">
+
+      <strong>Total (&#x20b9;)</strong>
+    </div>
+    <div class="offset-s11 col s1" style="margin-top: -3.5%; margin-left: 85.5%;">
+      {{subTotal+shipping_charge+adjustments}}
+    </div>
+
+  </div>
+
+</div>
+<br>
+<br>
+<br>
+<br>
+<div class="row">
+  <div class="col offset-l5 ">
+
+  <span id="print-invoice-btn"  role="button" class="waves-effect waves-light btn red" (click)="printInvoice();"
+           (keypress)="printInvoice()"><i class="material-icons left">print</i>Print</span>
+
+
+  <span  id="new-invoice-btn" role="button" class="waves-effect waves-light btn green" (click)="makeNewInvoice()"
+        (keypress)="makeNewInvoice()"><i class="material-icons left">add</i>New Bill</span>
+  </div>
+</div>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<!--<div class="col offset-l2  s1">-->
+    <!--<span tabindex="1" role="button" class="waves-effect waves-light btn red" (click)="printInvoice()"-->
+          <!--(keypress)="printInvoice()"><i class="material-icons left">print</i>Print Bill</span>-->
+<!--</div>-->
+
+
+<div class="row"  id="invoiceToPrint" style="display: none;border:1px solid black;height: 1020px;
+font-family: 'Roboto', helvetica, arial, sans-serif;
+font-size: 16px;
+font-weight: 400;
+text-rendering: optimizeLegibility;">
+  <div style="padding: 3%">
+  <div>
+    <span style="float:left">
+      <h2>Sales Order</h2>
+      Invoice#: {{newInvoice}}<br>
+      <span>Store Name: {{selected_warehouse.title}}</span>
+      <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+      SalesOrder Date: <span *ngIf="purchasedItems[0]!=null">{{purchasedItems[0].current_time | slice:0:10}}</span>
+    </span>
+
+
+    <span style="float: right">
+      <h3>M/S Goyal Enterprise</h3>
+      <p>
+        LF-12, B-Block, Mansarover Complex,<br> Nr. Habibganj Railway Station,<br> Bhopal 462021 <br>India<br>GSTIN 23AFEPG4029C1Z6
+      </p>
+      <p>
+        Ph. : 0755-4204215, 9300049642<br>
+        vidhangoyal@icloud.com<br>
+        www.waterpurifierdealer.com
+      </p>
+      <br>
+      <br>
+
+      Bill To: <span *ngIf="customer_name != null">{{customer_name}}</span><br>
+      Contact: <span *ngIf="customer_contact != null">{{customer_contact}}</span>
+      <br>
+      <br>
+      <br>
+    </span>
+  </div>
+
+
+
+
+    <br>
+    <br>
+    <br>
+
+
+    <table border="0" cellpadding="10" cellspacing="0" style = "background-color:#FFFFFF;border:1px solid #DDDDDD;width: 100%;">
+
+      <tr >
+        <th scope="col" valign="top" width="30%" style="background-color:#D8E2EA;color:#336699;font-family:Helvetica;font-size:14px;font-weight:bold;line-height:150%;text-align:left;">Item Details</th>
+        <th scope="col" valign="top" width="14%" style="background-color:#D8E2EA;color:#336699;font-family:Helvetica;font-size:14px;font-weight:bold;line-height:150%;text-align:left;">Qty</th>
+        <th scope="col" valign="top" width="14%" style="background-color:#D8E2EA;color:#336699;font-family:Helvetica;font-size:14px;font-weight:bold;line-height:150%;text-align:left;">Rate</th>
+        <th scope="col" valign="top" width="14%" style="background-color:#D8E2EA;color:#336699;font-family:Helvetica;font-size:14px;font-weight:bold;line-height:150%;text-align:left;">Discount</th>
+        <th scope="col" valign="top" width="14%" style="background-color:#D8E2EA;color:#336699;font-family:Helvetica;font-size:14px;font-weight:bold;line-height:150%;text-align:left;">CGST</th>
+        <th scope="col" valign="top" width="14%" style="background-color:#D8E2EA;color:#336699;font-family:Helvetica;font-size:14px;font-weight:bold;line-height:150%;text-align:left;">SGST</th>
+        <th scope="col" valign="top" width="14%" style="background-color:#D8E2EA;color:#336699;font-family:Helvetica;font-size:14px;font-weight:bold;line-height:150%;text-align:left;">Amount</th>
+      </tr>
+
+
+      <tbody>
+      <tr *ngFor="let purchasedItem of purchasedItems;let i = index" style="text-align: center">
+        <td valign="top" style="border-top:1px solid #DDDDDD;border-bottom:0;color:#202020;font-family:Helvetica;font-size:12px;font-weight:bold;line-height:150%;text-align:left;">{{purchasedItem.item_name}}</td>
+        <td valign="top" style="border-top:1px solid #DDDDDD;border-bottom:0;color:#202020;font-family:Helvetica;font-size:12px;font-weight:bold;line-height:150%;text-align:left;">{{purchasedItem.item_quantity}}</td>
+        <td valign="top" style="border-top:1px solid #DDDDDD;border-bottom:0;color:#202020;font-family:Helvetica;font-size:12px;font-weight:bold;line-height:150%;text-align:left;">{{purchasedItem.item_rate}}</td>
+        <td valign="top" style="border-top:1px solid #DDDDDD;border-bottom:0;color:#202020;font-family:Helvetica;font-size:12px;font-weight:bold;line-height:150%;text-align:left;"><span *ngIf="purchasedItem.item_discount_type=='Rs.'">Rs. </span>{{purchasedItem.item_discount}}<span *ngIf="purchasedItem.item_discount_type=='%'">%</span></td>
+        <td valign="top" style="border-top:1px solid #DDDDDD;border-bottom:0;color:#202020;font-family:Helvetica;font-size:12px;font-weight:bold;line-height:150%;text-align:left;"><div>{{purchasedItem.item_tax/2}}%<span *ngIf="purchasedItem.item_tax_type==false">(Incl.)</span></div> </td>
+        <td valign="top" style="border-top:1px solid #DDDDDD;border-bottom:0;color:#202020;font-family:Helvetica;font-size:12px;font-weight:bold;line-height:150%;text-align:left;"><div>{{purchasedItem.item_tax/2}}%<span *ngIf="purchasedItem.item_tax_type==false">(Incl.)</span></div> </td>
+        <!--<th><div *ngIf="purchasedItem.item_tax_type==false">Incl.</div> <div *ngIf="purchasedItem.item_tax_type==true">{{purchasedItem.item_tax}}</div> </th>-->
+        <td valign="top" style="border-top:1px solid #DDDDDD;border-bottom:0;color:#202020;font-family:Helvetica;font-size:12px;font-weight:bold;line-height:150%;text-align:left;">{{purchasedItem.item_amount}}</td>
+      </tr>
+      </tbody>
+    </table>
+    <table border="0" cellpadding="20" cellspacing="0" width="100%">
+      <tr>
+        <td valign="top" style="padding-top:0; padding-bottom:0;">
+          <table border="0" cellpadding="10" cellspacing="0" width="100%" class="templateDataTable">
+            <tr>
+              <td valign="top" width="280" class="leftColumnContent">
+
+                <!-- // Begin Module: Top Image with Content -->
+                <table border="0" cellpadding="20" cellspacing="0" width="100%">
+                  <tr>
+                    <td valign="top">
+                      <div>
+
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+                <!-- // End Module: Top Image with Content -->
+
+              </td>
+              <td valign="top" width="280" class="rightColumnContent"><!-- // Begin Module: Top Image with Content -->
+                <table border="0" cellpadding="20" cellspacing="0" style="margin-left: 39%;width: 68%;">
+                  <tr>
+                    <td valign="top" style="font-family:Helvetica;font-size:12px;font-weight:bold;line-height:150%;text-align:left;">Total: </td>
+                    <td valign="top" style="font-family:Helvetica;font-size:12px;font-weight:bold;line-height:150%;text-align:left;">{{subTotal}}</td>
+                  </tr>
+                  <tr>
+                    <td valign="top" style="font-family:Helvetica;font-size:12px;font-weight:bold;line-height:150%;text-align:left;">Shipping: </td>
+                    <td valign="top" style="font-family:Helvetica;font-size:12px;font-weight:bold;line-height:150%;text-align:left;">{{shipping_charge}}</td>
+                  </tr>
+                  <tr>
+                    <td valign="top" style="font-family:Helvetica;font-size:12px;font-weight:bold;line-height:150%;text-align:left;">{{adjustmentName}} </td>
+                    <td valign="top" style="font-family:Helvetica;font-size:12px;font-weight:bold;line-height:150%;text-align:left;">{{adjustments}}</td>
+                  </tr>
+                  <tr>
+                    <td valign="top" style="font-family:Helvetica;font-size:12px;font-weight:bold;line-height:150%;text-align:left;">SubTotal: </td>
+                    <td valign="top" style="font-family:Helvetica;font-size:12px;font-weight:bold;line-height:150%;text-align:left;">{{subTotal+shipping_charge+adjustments}}</td>
+                  </tr>
+
+                </table>
+                <!-- // End Module: Top Image with Content -->
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+    </table>
+
+    <table border="0" cellpadding="10" cellspacing="0" width="100%">
+      <tr>
+        <td valign="top">
+          <div>
+            <strong>Notes</strong>
+            <div>Thanks for your business.</div>
+            <div>This is a computer generated copy and does not require
+              seal and signature
+            </div>
+            <div>This sales order is for information purpose only.</div>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td valign="middle" id="utility">
+          <div style="text-align: center">
+            <em>Copyright &copy; Goyal Enterprise, All Rights Reserved</em>
+          </div>
+        </td>
+      </tr>
+    </table>
+</div>
+</div>
+
+
+
+

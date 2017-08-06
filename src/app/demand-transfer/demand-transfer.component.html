@@ -1,0 +1,196 @@
+<!--Structure-->
+<div class="row">
+  <div class="col s12 m4 l4 left-align">
+    <h4>Create an Order</h4><br>
+    <div>
+      <label>Create a Demand Order</label><br>
+      <a class="waves-effect waves-light btn" (click)="opendemandmodal()">
+        <i class="material-icons right">cloud</i>Demand Order</a>
+    </div>
+    <!--<br><br>-->
+    <!--<div>-->
+    <!--<label>Create a Transfer Order</label><br>-->
+    <!--<a class="waves-effect waves-light btn" (click)="opentransfermodal()">-->
+    <!--<i class="material-icons right">cloud</i>Transfer Order</a>-->
+    <!--</div>-->
+    <br><br>
+    <div>
+      <label>Refresh</label><br>
+      <button class="waves-effect waves-light btn" (click)="refresh()">Refresh</button>
+    </div>
+  </div>
+  <div class="col s12 m8 l8">
+    <h4>Demand History</h4>
+    <table>
+      <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>HSN/SAC</th>
+        <th>Demand From</th>
+        <th>Quantity</th>
+        <th>Status</th>
+        <th>Received</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of demandOrderData; let j = index">
+        <td>{{data.demand_item_type}}</td>
+        <td>{{data.demand_item_name}}</td>
+        <td>{{data.demand_item_hsn_sac}}</td>
+        <td>{{data.demand_item_reqfrom}}</td>
+        <td>{{data.demand_item_quantity}}</td>
+        <td>{{data.demand_item_status}}</td>
+        <td>{{data.demand_item_received}}</td>
+        <td><button class="btn btn-block waves-effect waves-green"
+                    id="{{j}}" *ngIf="data.demand_item_status=='approved'" (click)="confirmDemand($event)">Confirm</button></td>
+      </tr>
+      </tbody>
+    </table>
+
+    <br>
+    <br>
+    <h4>Transfer History</h4>
+    <table>
+      <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>HSN/SAC</th>
+        <th>Request By</th>
+        <th>Quantity</th>
+        <th>Status</th>
+        <th>Sent</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of transferOrderData; let i = index">
+        <td>{{data.transfer_item_type}}</td>
+        <td>{{data.transfer_item_name}}</td>
+        <td>{{data.transfer_item_hsn_sac}}</td>
+        <td>{{data.transfer_item_reqby}}</td>
+        <td>{{data.transfer_item_reqquantity}}</td>
+        <td>{{data.transfer_item_status}}</td>
+        <td>{{data.transfer_item_sent}}</td>
+        <td><button class="btn btn-block waves-effect waves-green"
+                    id="{{i}}" *ngIf="data.transfer_item_status=='pending'" (click)="opentransferapprovemodal($event)">Approve</button></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<!--Structure-->
+<!-- Approve Modal -->
+<div id="demand-transfer__transfer-approve-modal" class="modal modal-fixed-footer" materialize="modal" [materializeParams]="[{dismissible: false}]"
+     [materializeActions]="modalActions">
+  <div class="modal-content">
+    <h4 class="center-align">Approve Transfer</h4>
+    <div>
+      <div class="row">
+        <div class="col l4 m4 s12 offset-l1">
+          <h5>{{transferOrderApproveData.transfer_item_name}}</h5>
+        </div>
+        <div class="col l6 m4 s12 right" style="margin-top: 3%">
+          <strong>Requested Quantity: </strong><span>{{transferOrderApproveData.transfer_item_reqquantity}}</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col offset-l1">
+          {{transferOrderApproveData.transfer_item_hsn_sac}}
+        </div>
+      </div>
+      <div>
+        <div class="col l10 offset-l1">
+          <hr>
+        </div>
+      </div>
+      <br>
+      <br>
+      <div class="row">
+        <div class="col l10 offset-l1 left">
+          <strong>Requested By: </strong><span>{{transferOrderApproveData.transfer_item_reqby}}</span>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col l10 offset-l1 left">
+          <h5><strong>Available in Warehouse: {{transferOrderApproveData.transfer_item_currentquantity}}</strong></h5>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer card-footer-background">
+    <span class="activator grey-text text-darken-4">
+      <div class="col offset-l1">
+        <input type="number" min="0" #sent_quantity [ngModel]="transferOrderApproveData.transfer_item_reqquantity">
+      </div>
+      <a class="modal-action modal-close" (click)="approveTransfer(sent_quantity.value)" (keypress)="approveTransfer(sent_quantity.value)">
+        <i style="color: #03cbcb; margin-right: 11%; margin-top: 1%" class="material-icons right medium">check</i>
+      </a>
+    </span>
+  </div>
+</div>
+<!--Approve Modal New-->
+<!--Demand Order-->
+<div id="demand-transfer__demand-modal" class="modal" materialize="modal" [materializeParams]="[{dismissible: false}]"
+     [materializeActions]="modalActions">
+  <form [formGroup]="demandOrderForm" (ngSubmit)="demandOrderFormSubmit()">
+    <div class="modal-content">
+      <h4 class="center-align">Create Demand Order</h4>
+      <div class="row">
+        <div class="col s12 m12 l12">
+          <div>Type :
+            <input class="with-gap" type="radio" name="demand_item_type" value="product" formControlName="demand_item_type" id="demand_product" />
+            <label for="demand_product">Product</label>
+            <input class="with-gap" type="radio" name="demand_item_type" value="service" formControlName="demand_item_type" id="demand_service" />
+            <label for="demand_service">Service</label>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <!--<div class="input-field col s12 m12 l6">-->
+        <!--<input id="demand_item_name" formControlName="demand_item_name" type="text" class="validate">-->
+        <!--<label for="demand_item_name">Item Name</label>-->
+        <!--</div>-->
+        <div class="input-field col s12 m12 l6">
+          <!--<input type="text" id="autocomplete-input" class="autocomplete item-detail" autofocus="autofocus">-->
+          <input id="demand_item_name" type="text" formControlName="demand_item_name" list="items"
+                 (change)="onSelectItem()" [(ngModel)]="toAddItem.item_name">
+          <label for="demand_item_name">Item Name</label>
+          <datalist id="items">
+            <option *ngFor="let item of items" [value]="item">
+          </datalist>
+        </div>
+        <div class="input-field col s12 m12 l6">
+          <input id="demand_item_hsn_sac" formControlName="demand_item_hsn_sac" [(ngModel)]="toAddItem.item_hsn_sac"
+                 type="text" class="validate">
+          <label for="demand_item_hsn_sac">Item HSN/SAC</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12 m12 l12" *ngIf="warehouseData.length>0">
+          <select materialize="material_select" formControlName="demand_item_reqfrom">
+            <option value="" disabled selected>Warehouse Demand From</option>
+            <option *ngFor="let warehouse of warehouseData"
+                    [value]="warehouse.wh_id">
+              {{warehouse.wh_warehouse_name}}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12 m12 l12">
+          <input id="demand_item_quantity" formControlName="demand_item_quantity" type="number" min="0" class="validate">
+          <label for="demand_item_quantity">Quantity Demanded</label>
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="modal-footer">
+      <a class="waves-effect waves-green btn-flat" (click)="closedemandmodal()">Close</a>
+      <button class="btn btn-block modal-action modal-close waves-effect waves-green" type="submit">Create</button>
+    </div>
+  </form>
+  <br>
+</div>
+<!--Demand Order-->

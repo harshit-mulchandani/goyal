@@ -1,0 +1,89 @@
+.add-product:focus{
+  border:1px solid red;
+
+}
+
+
+.light-horizontal-line{
+  background-color: black;
+  border-bottom: none;
+}
+.total-row{
+  background-color: #f2f2f2;
+}
+.info-icon-margin{
+  margin-top: 2%;
+}
+#shell {
+  padding-left: 2%;
+  width: 382%;
+  padding-right: 43%;
+  height: 69px;
+  background: #f2f2f2;
+  border-radius: 6px;
+  padding-top: 13%;
+}
+
+
+.adjust_remove_circle{
+  margin-left: 2%;
+  margin-top: 4%;
+  color: red;
+}
+
+.info_circle{
+  margin-left: 0%;
+  margin-top: 4%;
+}
+
+
+#item_list_2{
+  display:none;
+}
+#item_list_3{
+  display:none;
+}
+#item_list_4{
+  display:none;
+}
+#item_list_5{
+  display:none;
+}
+#item_list_6{
+  display:none;
+}
+#item_list_7{
+  display:none;
+}
+#item_list_8{
+  display:none;
+}
+#item_list_9{
+  display:none;
+}
+#item_list_10{
+  display:none;
+}
+
+#footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+#footer {
+  background: #ffffff;
+  line-height: 2;
+  text-align: center;
+  color: #042E64;
+  font-size: 30px;
+  /*font-family: sans-serif;*/
+  box-shadow: 0 0 15px #00214B;
+  margin-left: -9%;
+  z-index: 999;
+}
+
+.saleslist-component__invoice-options{
+  background-color: #ffff93;
+  padding-top: 2%;
+}

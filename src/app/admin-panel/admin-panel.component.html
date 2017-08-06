@@ -1,0 +1,552 @@
+
+<ul id="dropdown1" class="dropdown-content col l6" style="width: auto !important;">
+  <li><a href="#!" class="disabled"><i class="material-icons">store</i>{{loggedInUserWarehouse.title}}</a></li>
+  <li  *ngIf="loggedInUser[0].user_role == 'admin' || loggedInUser[0].user_role == 'whmanager' " ><a (click)="getWarehouseList()" class="modal-trigger" href="#warehouseChangeModal"><i class="material-icons tiny">swap_horiz</i>Change Warehouse</a></li>
+  <li><a [routerLink]= "['/settings']" ><i class="material-icons tiny">settings</i>Settings</a></li>
+  <li class="divider"></li>
+  <li><a href="#!" (click)="logOut()"><i class="material-icons tiny">power_settings_new</i>Log out</a></li>
+</ul>
+
+
+<nav style="background-color: #00bcd4">
+  <div class="nav-wrapper">
+    <a href="#!" class="brand-logo logo-padding">Goyal Enterprise</a>
+    <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+    <ul class="right hide-on-med-and-down">
+      <!-- Dropdown Trigger -->
+      <li><a class="dropdown-button" href="#!" data-activates="dropdown1">{{loggedInUser[0].user_name}}<i class="material-icons right">arrow_drop_down</i></a></li>
+    </ul>
+    <ul class="side-nav" id="mobile-demo">
+      <li><a href="sass.html">Sass</a></li>
+      <li><a href="badges.html">Components</a></li>
+      <li><a href="collapsible.html">Javascript</a></li>
+      <li><a href="mobile.html">Mobile</a></li>
+    </ul>
+  </div>
+</nav>
+<div *ngIf="preloader" >
+  <div class="progress" style="margin-top: 0">
+    <div class="indeterminate"></div>
+  </div>
+</div>
+<!--<nav style="background-color: #00bcd4">-->
+  <!--<div class="nav-wrapper">-->
+    <!--<a href="#!" class="brand-logo logo-padding">Goyal Enterprise</a>-->
+    <!--<a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>-->
+    <!--<ul class="right hide-on-med-and-down">-->
+      <!--<li><a href="sass.html">Sass</a></li>-->
+      <!--<li><a class="dropdown-button" href="#" data-activates="dropdown1">Dropdown<i class="material-icons right">arrow_drop_down</i></a></li>-->
+    <!--</ul>-->
+    <!--<ul class="side-nav" id="mobile-demo">-->
+      <!--<li><a href="sass.html">Sass</a></li>-->
+      <!--<li><a class="dropdown-button"  data-activates="dropdown1" >Dropdown<i class="material-icons right">arrow_drop_down</i></a></li>-->
+    <!--</ul>-->
+  <!--</div>-->
+<!--</nav>-->
+<div class="row main-app">
+  <div class="offset-s1 col s10">
+    <ul id="tabs-swipe-demo" class="tabs" materialize="">
+      <li class="tab col s2"><a class="active" href="#test-swipe-1">Sale</a></li>
+      <li class="tab col s3"><a href="#test-swipe-2">Manage Inventory</a></li>
+      <li class="tab col s3"><a href="#test-swipe-3">Sales List</a></li>
+      <li class="tab col s3"><a href="#test-swipe-4" (click)="clearbadge()">Demand/Transfer
+        <span *ngIf="pendingCount!=0" class="countBadge new badge red">{{pendingCount}}</span></a></li>
+      <li class="tab col s1"><a href="#test-swipe-5">View</a></li>
+      <!--<li class="tab col s1"><a href="#test-swipe-6"><i class="material-icons tiny">settings</i></a></li>-->
+    </ul>
+    <div id="test-swipe-1"><app-sale></app-sale></div>
+    <div id="test-swipe-2"><app-inventory></app-inventory></div>
+    <div id="test-swipe-3"><app-saleslist></app-saleslist></div>
+    <div id="test-swipe-4"><app-demand-transfer></app-demand-transfer></div>
+    <div id="test-swipe-5"><app-view></app-view></div>
+    <!--<div id="test-swipe-6"><app-settings></app-settings></div>-->
+  </div>
+</div>
+
+<!--Vertical fab button-->
+<div class="fixed-action-btn vertical click-to-toggle" style="z-index: 999">
+  <a class="btn-floating btn-large red z-depth-3 waves-effect waves-light tooltipped"
+     data-position="left" data-delay="50" data-tooltip="Quick Add" (click)="rotate()">
+    <i class="quick-add-btn large material-icons">add</i>
+  </a>
+  <ul>
+    <li><a class="btn-floating waves-effect waves-light red tooltipped"
+           data-position="left" data-delay="50" data-tooltip="Add Warehouse Manager" (click)="openwhmanagermodal()">
+      <i class="material-icons">person_pin</i></a>
+    </li>
+    <li><a class="btn-floating waves-effect waves-light blue tooltipped"
+           data-position="left" data-delay="50" data-tooltip="Add User" (click)="openusermodal()">
+      <i class="material-icons">supervisor_account</i></a>
+    </li>
+    <!--<li><a class="btn-floating waves-effect waves-light yellow darken-1 tooltipped"-->
+           <!--data-position="left" data-delay="50" data-tooltip="Add Warehouse" (click)="openwhmodal()">-->
+      <!--<i class="material-icons">store</i></a></li>-->
+    <li><a class="btn-floating waves-effect waves-light green tooltipped"
+           data-position="left" data-delay="50" data-tooltip="Add Item" (click)="openitemmodal()">
+      <i class="material-icons">receipt</i></a></li>
+  </ul>
+</div>
+<!--<div class="fixed-action-btn horizontal">-->
+  <!--<a class="btn-floating btn-large red">-->
+    <!--<i class="large material-icons">mode_edit</i>-->
+  <!--</a>-->
+  <!--<ul>-->
+    <!--<li><a class="btn-floating red"><i class="material-icons">insert_chart</i></a></li>-->
+    <!--<li><a class="btn-floating yellow darken-1"><i class="material-icons">format_quote</i></a></li>-->
+    <!--<li><a class="btn-floating green"><i class="material-icons">publish</i></a></li>-->
+    <!--<li><a class="btn-floating blue"><i class="material-icons">attach_file</i></a></li>-->
+  <!--</ul>-->
+<!--</div>-->
+
+
+<!--Vertical fab button end-->
+<!--Warehouse Manager Modal-->
+<div id="admin-component__whmanager-modal" class="modal" materialize="modal" [materializeParams]="[{dismissible: false}]" [materializeActions]="modalActions">
+  <form [formGroup]="whmanagerForm" (ngSubmit)="whmanagerFormSubmit()">
+    <div class="modal-content">
+      <h4 class="center-align">Add Warehouse Manager</h4>
+      <div class="row">
+        <div class="input-field col s12 m5 l4">
+          <select materialize="material_select" formControlName="whmanager_salutation">
+            <option value="" disabled selected>Choose Title</option>
+            <option *ngFor="let salut of saluts" [value]="salut.value" >
+              {{salut.title}}
+            </option>
+          </select>
+        </div>
+        <div class="input-field col s12 m7 l8">
+          <input id="whmanager_name" formControlName="whmanager_name" type="text" class="validate">
+          <label for="whmanager_name">Name</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12 m12 l12">
+          <input id="whmanager_email" formControlName="whmanager_email" type="email" class="validate">
+          <label for="whmanager_email">Email Id</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12 m12 l12">
+          <input id="whmanager_password" formControlName="whmanager_password" type="password" class="validate">
+          <label for="whmanager_password">Password</label>
+        </div>
+      </div>
+      <div class="row">
+        <!--<div class="input-field col s12 m6 l6">-->
+          <!--<select materialize="material_select" formControlName="whmanager_role">-->
+            <!--<option value="" disabled selected>Role</option>-->
+            <!--<option *ngFor="let role of whmanager_roles"-->
+                    <!--[value]="role.title">-->
+              <!--{{role.value}}-->
+            <!--</option>-->
+          <!--</select>-->
+        <!--</div>-->
+        <!--<div class="input-field col s12 m6 l6">-->
+          <!--<select materialize="material_select" formControlName="whmanager_wh">-->
+            <!--<option value="" disabled selected>Warehouse</option>-->
+            <!--<option *ngFor="let wh of whs" [value]="wh.value">-->
+              <!--{{wh.title}}-->
+            <!--</option>-->
+          <!--</select>-->
+        <!--</div>-->
+      </div>
+      <div class="row">
+        <div class="input-field col s12 m12 l12">
+          <textarea id="whmanager_address" formControlName="whmanager_address" class="materialize-textarea"></textarea>
+          <label for="whmanager_address">Address</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12 m12 l12">
+          <input id="whmanager_contact" formControlName="whmanager_contact" type="text" class="validate">
+          <label for="whmanager_contact">Contact No.</label>
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="modal-footer">
+      <a class="waves-effect waves-green btn-flat" (click)="closewhmanagermodal()">Close</a>
+      <button class="btn btn-block modal-action modal-close waves-effect waves-green" type="submit">Create</button>
+    </div>
+    <br>
+  </form>
+</div>
+<!--Warehouse Manager Modal-->
+<!-- User Modal-->
+<div id="admin-component__user-modal" class="modal" materialize="modal" [materializeParams]="[{dismissible: false}]" [materializeActions]="modalActions">
+  <form [formGroup]="userForm" (ngSubmit)="userFormSubmit()">
+  <div class="modal-content">
+    <h4 class="center-align">Add User</h4>
+      <div class="row">
+        <div class="input-field col s12 m2 l4">
+          <select materialize="material_select" formControlName="user_salutation">
+            <option value="" selected disabled>Choose Title</option>
+            <option *ngFor="let salut of saluts"
+                    [value]="salut.value">
+              {{salut.title}}
+            </option>
+          </select>
+        </div>
+        <div class="input-field col s12 m10 l8">
+          <input id="user_name" formControlName="user_name" type="text" class="validate">
+          <label for="user_name">Name</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12 m12 l12">
+          <input id="user_email" formControlName="user_email" type="email" class="validate">
+          <label for="user_email">Email Id</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12 m12 l12">
+          <input id="user_password" formControlName="user_password" type="password" class="validate">
+          <label for="user_password">Password</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12 m12 l6">
+          <select id="user_role" materialize="material_select" formControlName="user_role">
+            <option value="" selected disabled>Choose Role</option>
+            <option *ngFor="let role of user_roles"
+                    [value]="role.value">
+              {{role.title}}
+            </option>
+          </select>
+        </div>
+        <div class="input-field col s12 m12 l6" *ngIf="whs.length>0">
+          <select id="user_wh" materialize="material_select" formControlName="user_wh">
+            <option value="" selected disabled>Choose Warehouse</option>
+            <option *ngFor="let wh of whs" [value]="wh.value">
+              {{wh.title}}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12 m12 l12">
+          <textarea id="user_address" formControlName="user_address" class="materialize-textarea"></textarea>
+          <label for="user_address">Address</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12 m12 l6">
+          <input id="user_city" formControlName="user_city" type="text" class="validate">
+          <label for="user_city">City</label>
+        </div>
+        <div class="input-field col s12 m12 l6">
+          <select materialize="material_select" formControlName="user_state">
+            <option value="" selected disabled>Choose State</option>
+            <option *ngFor="let state of states"
+                    [value]="state.value">
+              {{state.title}}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12 m12 l6">
+          <input id="user_zipcode" formControlName="user_zipcode" type="text" class="validate">
+          <label for="user_zipcode">Zipcode</label>
+        </div>
+        <div class="input-field col s12 m12 l6">
+          <select materialize="material_select" formControlName="user_country">
+            <option value="" selected disabled>Choose Country</option>
+            <option *ngFor="let country of countries"
+                    [value]="country.value">
+              {{country.title}}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12 m12 l12">
+          <input id="user_contact" formControlName="user_contact" type="text" class="validate">
+          <label for="user_contact">Contact No.</label>
+        </div>
+      </div>
+  </div>
+  <div class="modal-footer">
+    <a class="waves-effect waves-green btn-flat" (click)="closeusermodal()">Close</a>
+    <button class="btn btn-block modal-action modal-close waves-effect waves-green" type="submit">Create</button>
+  </div>
+  </form>
+  <br>
+</div>
+<!--User Modal-->
+<!--Warehouse Modal-->
+<!--<div id="admin-component__wh-modal" class="modal" materialize="modal" [materializeParams]="[{dismissible: false}]" [materializeActions]="modalActions">-->
+  <!--<div class="modal-content">-->
+    <!--<h4 class="center-align">Add Warehouse</h4>-->
+    <!--<form [formGroup]="whForm" (ngSubmit)="whFormSubmit()">-->
+      <!--<div class="row">-->
+        <!--<div class="input-field col s12 m12 l12">-->
+          <!--<input id="wh_warehouse" formControlName="wh_warehouse" type="text" class="validate">-->
+          <!--<label for="wh_warehouse">Warehouse</label>-->
+        <!--</div>-->
+      <!--</div>-->
+      <!--<div class="row">-->
+        <!--<div class="input-field col s12 m12 l12">-->
+          <!--<input id="wh_email" formControlName="wh_email" type="email" class="validate">-->
+          <!--<label for="wh_email">Email</label>-->
+        <!--</div>-->
+      <!--</div>-->
+      <!--<div class="row">-->
+        <!--<div class="input-field col s12 m12 l12">-->
+          <!--<textarea id="wh_address" formControlName="wh_address" class="materialize-textarea"></textarea>-->
+          <!--<label for="wh_address">Address</label>-->
+        <!--</div>-->
+      <!--</div>-->
+      <!--<div class="row">-->
+        <!--<div class="input-field col s12 m12 l12">-->
+          <!--<input id="wh_contact" formControlName="wh_contact" type="text" class="validate">-->
+          <!--<label for="wh_contact">Contact No.</label>-->
+        <!--</div>-->
+      <!--</div>-->
+    <!--</form>-->
+  <!--</div>-->
+  <!--<div class="modal-footer">-->
+    <!--<a class="waves-effect waves-green btn-flat" (click)="closewhmodal()">Close</a>-->
+    <!--<button class="btn btn-block modal-action modal-close waves-effect waves-green">Create</button>-->
+  <!--</div>-->
+  <!--<br>-->
+<!--</div>-->
+<!--Warehouse Modal-->
+
+<!--Product Modal-->
+<div id="admin-component__item-modal" class="modal" materialize="modal" [materializeParams]="[{dismissible: false}]" [materializeActions]="modalActions">
+  <form [formGroup]="itemForm" (ngSubmit)="itemFormSubmit()">
+    <div class="modal-content">
+      <h4 class="center-align">Add Item</h4>
+      <div class="row">
+        <div class="input-field col s12 m5 l3">
+          <select id="item_type" materialize="material_select" formControlName="item_type">
+            <option value="" selected disabled>Type</option>
+            <option *ngFor="let type of types"
+                    [value]="type.value">
+              {{type.title}}
+            </option>
+          </select>
+        </div>
+        <div class="input-field col s12 m7 l9">
+          <input id="item_name" formControlName="item_name" type="text" class="validate">
+          <label for="item_name">Item Name</label>
+        </div>
+      </div>
+      <!--<div class="row">-->
+      <!--<div class="input-field col s12 m12 l12">-->
+      <!--<div class="file-field input-field">-->
+      <!--<div class="btn">-->
+      <!--<span>Choose Image</span>-->
+      <!--<input type="file">-->
+      <!--</div>-->
+      <!--<div class="file-path-wrapper">-->
+      <!--<input class="file-path validate" type="text">-->
+      <!--</div>-->
+      <!--</div>-->
+      <!--</div>-->
+      <!--</div>-->
+      <div class="row">
+        <div class="input-field col s12 m12 l6">
+          <input id="item_hsn_sac" formControlName="item_hsn_sac" type="text" class="validate">
+          <label for="item_hsn_sac">hsn_sac</label>
+        </div>
+        <div class="input-field col s12 m12 l6">
+          <input id="item_manufacturer" formControlName="item_manufacturer" type="text" class="validate">
+          <label for="item_manufacturer">Manufacturer</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12 m12 l6">
+          <input id="item_brand" formControlName="item_brand" type="text" class="validate">
+          <label for="item_brand">Brand</label>
+        </div>
+        <div class="input-field col s12 m12 l6">
+          <input id="item_upc" formControlName="item_upc" type="text" class="validate">
+          <label for="item_upc">UPC</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12 m12 l6">
+          <input id="item_purchasingprice" formControlName="item_purchasingprice" type="number" min="0" class="validate">
+          <label for="item_purchasingprice">Purchase Price</label>
+        </div>
+        <!--<div class="input-field col s12 m12 l6">-->
+        <!--<input id="item_tax" formControlName="item_tax" type="text" class="validate">-->
+        <!--<label for="item_tax">Purchase Tax Rate</label>-->
+        <!--</div>-->
+        <div class="input-field col s12 m12 l6">
+          <select id="item_tax"  materialize="material_select" formControlName="item_tax">
+            <option value="" disabled selected>Tax Rate</option>
+            <option *ngFor="let tax of taxes"
+                    [value]="tax.value">
+              {{tax.title}}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12 m12 l6">
+          <input id="item_sellingprice" formControlName="item_sellingprice" type="number" min="0" class="validate">
+          <label for="item_sellingprice">Selling Price</label>
+        </div>
+        <div class="input-field col s12 m12 l6">
+          <input id="item_min_sellingprice" formControlName="item_min_sellingprice" type="number" min="0" class="validate">
+          <label for="item_min_sellingprice">Minimum Selling Price</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12 m12 l6">
+          <input id="item_reorderlevel" formControlName="item_reorderlevel" type="number" min="0" class="validate">
+          <label for="item_reorderlevel">Purchase Reorder Level</label>
+        </div>
+        <!--<div class="input-field col s12 m12 l6">-->
+          <!--<input id="item_openingstock" formControlName="item_openingstock" type="number" min="0" class="validate">-->
+          <!--<label for="item_openingstock">Purchase Opening Stock</label>-->
+        <!--</div>-->
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a class="waves-effect waves-green btn-flat" (click)="closeitemmodal()">Cancel</a>
+      <button class="btn btn-block modal-action modal-close waves-effect waves-green" type="submit" [disabled]="!itemForm.valid">Create</button>
+    </div>
+    <br>
+  </form>
+</div>
+<!--<div id="admin-component__product-modal" class="modal" materialize="modal" [materializeParams]="[{dismissible: false}]" [materializeActions]="modalActions">-->
+  <!--<div class="modal-content">-->
+    <!--<h4 class="center-align">Add Product</h4>-->
+    <!--<form [formGroup]="productForm" (ngSubmit)="productFormSubmit()">-->
+      <!--<div class="row">-->
+        <!--&lt;!&ndash;Type:<div *ngFor="let type of types">&ndash;&gt;-->
+        <!--&lt;!&ndash;<input class="with-gap" type="radio" formControlName="product_type" [value]="type"/>&ndash;&gt;-->
+        <!--&lt;!&ndash;{{type}}&ndash;&gt;-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+        <!--<div *ngFor="let type of types">-->
+          <!--<input class='with-gap'-->
+                 <!--name='types'-->
+                 <!--type='radio'-->
+                 <!--[id]='type'-->
+                 <!--[value]='type'-->
+          <!--/>-->
+          <!--<label [for]='type'>{{type}}</label>-->
+        <!--</div>-->
+      <!--</div>-->
+      <!--<div class="row">-->
+        <!--<div class="input-field col s12 m12 l12">-->
+          <!--<input id="product_name" type="text" class="validate">-->
+          <!--<label for="product_name">Product Name</label>-->
+        <!--</div>-->
+      <!--</div>-->
+      <!--<div class="row">-->
+        <!--<div class="input-field col s12 m12 l12">-->
+          <!--<div class="file-field input-field">-->
+            <!--<div class="btn">-->
+              <!--<span>Choose Image</span>-->
+              <!--<input type="file">-->
+            <!--</div>-->
+            <!--<div class="file-path-wrapper">-->
+              <!--<input class="file-path validate" type="text">-->
+            <!--</div>-->
+          <!--</div>-->
+        <!--</div>-->
+      <!--</div>-->
+      <!--<div class="row">-->
+        <!--<div class="input-field col s12 m12 l6">-->
+          <!--<input id="product_hsn_sac" type="text" class="validate">-->
+          <!--<label for="product_hsn_sac">hsn_sac</label>-->
+        <!--</div>-->
+        <!--<div class="input-field col s12 m12 l6">-->
+          <!--<input id="product_manufacturer" type="text" class="validate">-->
+          <!--<label for="product_manufacturer">Manufacturer</label>-->
+        <!--</div>-->
+      <!--</div>-->
+      <!--<div class="row">-->
+        <!--<div class="input-field col s12 m12 l6">-->
+          <!--<input id="product_brand" type="text" class="validate">-->
+          <!--<label for="product_brand">Brand</label>-->
+        <!--</div>-->
+        <!--<div class="input-field col s12 m12 l6">-->
+          <!--<input id="product_upc" type="text" class="validate">-->
+          <!--<label for="product_upc">UPC</label>-->
+        <!--</div>-->
+      <!--</div>-->
+      <!--<div class="row">-->
+        <!--<div class="input-field col s12 m12 l6">-->
+          <!--<input id="product_sp" type="number" min="0" class="validate">-->
+          <!--<label for="product_sp">Selling Price</label>-->
+        <!--</div>-->
+        <!--<div class="input-field col s12 m12 l6">-->
+          <!--<input id="product_pp" type="number" min="0" class="validate">-->
+          <!--<label for="product_pp">Purchase Price</label>-->
+        <!--</div>-->
+      <!--</div>-->
+      <!--<div class="row">-->
+        <!--<div class="input-field col s12 m12 l6">-->
+          <!--<input id="product_tax" type="number" min="0" class="validate">-->
+          <!--<label for="product_tax">Purchase Tax Rate</label>-->
+        <!--</div>-->
+        <!--<div class="input-field col s12 m12 l6">-->
+          <!--<input id="product_reorderlvl" type="number" min="0" class="validate">-->
+          <!--<label for="product_reorderlvl">Purchase Reorder Level</label>-->
+        <!--</div>-->
+      <!--</div>-->
+      <!--<div class="row">-->
+        <!--<div class="input-field col s12 m12 l6">-->
+          <!--<input id="product_openingstock" type="number" min="0" class="validate">-->
+          <!--<label for="product_openingstock">Purchase Opening Stock</label>-->
+        <!--</div>-->
+      <!--</div>-->
+    <!--</form>-->
+  <!--</div>-->
+  <!--<div class="modal-footer">-->
+    <!--<a class="waves-effect waves-green btn-flat" (click)="closeproductmodal()">Close</a>-->
+    <!--<button class="btn btn-block modal-action modal-close waves-effect waves-green">Create</button>-->
+  <!--</div>-->
+  <!--<br>-->
+<!--</div>-->
+<!--Product Modal-->
+
+
+
+<!--------Change Warehouse---------------->
+
+<div id="warehouseChangeModal" class="modal" style="left:64%;width:33%;height: 37%">
+  <div class="modal-content">
+    <h4>Change Warehouse</h4>
+    <div class="warehouseSelection">
+      <div class="input-field col s12" *ngIf="whs.length>0" >
+        <select id="auth_warehouse" [(ngModel)]="loggedInUserWarehouse" materialize="material_select">
+          <option value="" disabled selected>Choose Warehouse</option>
+          <option *ngFor="let wh of whs"
+                  [ngValue]="wh.value">
+            {{wh.title}}
+          </option>
+        </select>
+      </div>
+      <!--<input id="auth_warehouse_input" list="auth_warehouse">-->
+      <!--<datalist id="auth_warehouse">-->
+      <!--<option *ngFor="let wh of whs" [value]="wh.value">-->
+      <!--{{wh.title}}-->
+      <!--</option>-->
+      <!--</datalist>-->
+      <div class="right-align">
+
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn waves-effect waves-light right-align modal-close" type="submit" (click)="changeWarehouse()" name="action">Submit
+      <i class="material-icons left-align">send</i>
+    </button>
+    <!--<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a>-->
+  </div>
+</div>
+
+
+
+
+
+
+<!---------------------------------------->
+

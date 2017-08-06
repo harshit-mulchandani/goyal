@@ -1,0 +1,448 @@
+<br>
+<div class="progress hide">
+  <div class="indeterminate"></div>
+</div>
+<div class="row">
+  <div class="col l2 m2 offset-l11 offset-m11">
+    <span role="button" (click)="refreshList()"  class="btn-floating blue"><i class="material-icons">refresh</i>Refresh List</span>
+  </div>
+</div>
+<div class="row">
+  <div class="col l12 saleslist-component__invoice-options">
+    <div class="col right" *ngIf="invoiceOptions" >
+      <a class="btn-flat"><i class="material-icons" (click)="closeOptions()" >close</i></a>
+    </div>
+  <div *ngIf="invoiceOptions" class="col l8 left">
+
+    <div class="row">
+      <div class="col l1 left">
+        <a class="btn-flat" ><i class="material-icons" (click)="deleteInvoiceItem()">delete</i></a>
+      </div>
+      <div class="col l1 left">
+        <a class="btn-flat" ><i class="material-icons" (click)="print()">file_download</i></a>
+      </div>
+      <div class="col l1 left">
+        <a class="btn-flat modal-trigger" href="#mailModal"><i class="material-icons">mail</i></a>
+      </div>
+      <div class="col l1 left">
+        <a class="btn-flat modal-trigger" href="#modal1"><i class="material-icons" (click)="openEditModal()" >mode_edit</i></a>
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="col s12 m12 l12">
+    <table class="striped">
+      <thead>
+      <tr>
+        <th *ngFor="let head of salesListTemplate">{{head}}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of invoice_list_final">
+        <td><input name="invoice_list_item" type="radio" class="with-gap"
+                   id="{{data.invoice_number}}" (click)="showInvoiceOptions($event)"/>
+
+          <label for="{{data.invoice_number}}"></label></td>
+
+        <td>{{data.invoice_date | slice:0:10}}</td>
+        <td>{{data.invoice_number}}</td>
+        <td>{{data.invoice_customer_name}}</td>
+        <td>{{data.invoice_amount}}
+          <span *ngIf="data.invoice_edited == 1"><span class="new badge adjust_edit-badge" data-badge-caption="Edited"></span></span>
+        </td>
+
+      </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+
+
+</div>
+
+<!--<pagination-controls (pageChange)="p = $event"></pagination-controls>-->
+
+
+<!--<div class="row">-->
+  <!--<div class="col offset-l9">-->
+    <!--<pagination-controls (pageChange)="p = $event"></pagination-controls>-->
+  <!--</div>-->
+<!--</div>-->
+
+<!--View Invoice Item Modal-->
+<div id="saleslist-component__invoice-item-modal" class="modal" materialize="modal" [materializeParams]="[{dismissible: false}]" [materializeActions]="modalActions">
+  <div class="modal-content">
+    <h4 class="center-align">Add Warehouse Manager</h4>
+  </div>
+  <br>
+</div>
+<!--View Invoice Item Modal-->
+
+<div id="modal1" class="modal modal-fixed-footer">
+  <div class="modal-content" *ngIf="selectedInvoice!=''">
+    <h4>Edit Sales Order</h4>
+    <p>Invoice# {{selectedInvoice}}</p>
+    <table class="striped">
+      <thead>
+      <tr>
+        <th>Description</th>
+        <th>Quantity</th>
+        <th>Rate</th>
+        <th>Tax</th>
+        <th>Discount</th>
+        <th>Amount</th>
+      </tr>
+      </thead>
+
+      <tbody>
+      <tr *ngFor="let data of editInvoice">
+        <td>{{data.item_name}}</td>
+        <td>{{data.item_quantity}}</td>
+        <td>{{data.item_rate}}</td>
+        <td>{{data.item_tax}}%</td>
+        <td><div *ngIf="data.item_discount_type=='Rs.'" >Rs. {{data.item_discount}}</div>
+        <div *ngIf="data.item_discount_type=='%'" >{{data.item_discount}} %</div>
+          <div *ngIf="data.item_discount_type==''" >{{data.item_discount}}</div>
+        </td>
+        <td>{{data.item_amount}}</td>
+      </tr>
+      </tbody>
+    </table>
+    <br>
+    <div class="row">
+      <div class="col l6 m6 right">
+        <div class="col m5 l5">
+          Total:
+        </div>
+        <div class="col m4 l5 right">
+          {{invoice_amount}}
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col l6 m6 right">
+        <div class="col m5 l5">
+          Shipping Charge:
+        </div>
+        <div class="col m4 l5 right">
+          {{invoice_shippingcharge}}
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col l6 m6 right">
+        <div class="col m5 l5">
+          <input type="text" [(ngModel)]="adjustmentName" >
+        </div>
+        <div class="col m4 l5 right">
+          <input type="number"  [(ngModel)]="adjustmentValue">
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col l6 m6 right">
+        <div class="col m5 l5">
+          Total
+        </div>
+        <div class="col m4 l5 right">
+          {{invoice_amount+invoice_shippingcharge+adjustmentValue}}
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="modal-footer">
+    <a  (click)="emptyModal()" class="modal-action modal-close waves-effect waves-green btn-flat ">Dismiss</a>
+    <a (click)="editInvoiceItem()" class="btn btn-block modal-action modal-close waves-effect waves-green blue ">Edit</a>
+  </div>
+</div>
+
+
+<div id="invoice" style="border: 1px solid black;display:none;" class="row">
+<div   class="col l12">
+  <div class="row">
+    <div class="col l8">
+    <h4>Sales Order</h4>
+    <p>Invoice# {{selectedInvoice}}</p>
+    </div>
+    <div class="col l4">
+      <h5>M/S Goyal Enterprise</h5>
+      <p>
+        LF-12, B-Block, Mansarover Complex,<br> Nr. Habibganj Railway Station,<br> Bhopal 462021 <br>India<br>GSTIN 23AFEPG4029C1Z6
+      </p>
+      <p>
+        Ph. : 0755-4204215, 9300049642<br>
+        vidhangoyal@icloud.com<br>
+        www.waterpurifierdealer.com
+      </p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col l7">
+      Sales Order Date: {{ selectedInvoiceDate}}
+
+    </div>
+    <div class="col l5">
+      Bill To:
+      {{customerName}}<br>
+      Contact: {{customerContact}}
+    </div>
+  </div>
+
+  <table class="striped">
+    <thead style="color: white;background-color: black">
+    <tr>
+      <th>Description</th>
+      <th>Quantity</th>
+      <th>Rate</th>
+      <th>Discount</th>
+      <th>Amount</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr *ngFor="let data of editInvoice">
+      <td>{{data.item_name}}</td>
+      <td>{{data.item_quantity}}</td>
+      <td>{{data.item_rate}}</td>
+      <td><div *ngIf="data.item_discount_type=='Rs.'" >Rs. {{data.item_discount}}</div>
+        <div *ngIf="data.item_discount_type=='%'" >{{data.item_discount}} %</div>
+        <div *ngIf="data.item_discount_type==''" >{{data.item_discount}}</div>
+      </td>
+      <td>{{data.item_amount}}</td>
+    </tr>
+    </tbody>
+  </table>
+  <br>
+  <div class="row">
+    <div class="col l6 m6 right">
+      <div class="col m5 l5">
+        Total:
+      </div>
+      <div class="col m4 l5 right">
+        {{invoice_amount}}
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col l6 m6 right">
+      <div class="col m5 l5">
+        Shipping Charge:
+      </div>
+      <div class="col m4 l5 right">
+        {{invoice_shippingcharge}}
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col l6 m6 right">
+      <div class="col m5 l5">
+        {{adjustmentName}}
+      </div>
+      <div class="col m4 l5 right">
+        {{adjustmentValue}}
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col l6 m6 right">
+      <div class="col m5 l5">
+        Total
+      </div>
+      <div class="col m4 l5 right">
+        {{invoice_amount+invoice_shippingcharge+adjustmentValue}}
+      </div>
+    </div>
+  </div>
+
+
+</div>
+</div>
+
+
+<!------------------------------------------------------!>
+<!--------------------------------------------------------->
+
+  <div id="mailModal" class="modal large modal-fixed-footer">
+    <div class="modal-content">
+      <h4>Mail Invoice</h4>
+      <hr>
+      <div class="row">
+      <div class="input-field col l6 m6 s12">
+        <input type="email" disabled value="greatguyharshit@gmail.com" id="saleslist_component__email-to"><label for="saleslist_component__email-to" class="active">From: </label>
+      </div>
+      <div class="input-field col l6 m6 s12">
+        <input type="email" [(ngModel)]="emailTo" id="saleslist_component__email"><label class="active" for="saleslist_component__email">Send to: </label>
+      </div>
+      <div class="input-field col l6 m6 s12">
+        <input type="email" [(ngModel)]="emailCc" id="saleslist_component__cc-email"><label class="active" for="saleslist_component__cc-email">Cc: </label>
+      </div>
+      <!--<div class="input-field col l6 m6 s12">-->
+        <!--<a (click)="addBcc()" *ngIf="!bcc">Bcc</a>-->
+        <!--<input *ngIf="bcc" type="email" id="saleslist_component__bcc-email"><label *ngIf="bcc" class="active" for="saleslist_component__bcc-email">Bcc: </label>-->
+      <!--</div>-->
+      </div>
+      <div class="input-field">
+        <div class="textarea_dimensions">
+          <div class="row header">
+            <div class="col l8 offset-l3">
+              <h4 class="heading">M/S Goyal Enterprises</h4>
+            </div>
+          </div>
+          <div class="row">
+            Dear {{customerName}},<br>
+            Thank you for your business. Your invoice can be viewed, printed and downloaded as PDF from the link below.
+          </div>
+
+
+          <div id="invoiceMail" style="border: 1px solid black;padding: 18px" class="row">
+            <div   class="col l12">
+              <div class="row">
+                <div class="col l8">
+                  <h4>Sales Order</h4>
+                  <p>Invoice# {{selectedInvoice}}</p>
+                </div>
+                <div class="col l4">
+                  <h6>M/S Goyal Enterprise</h6>
+                  <p>
+                    LF-12, B-Block, Mansarover Complex,<br> Nr. Habibganj Railway Station,<br> Bhopal 462021 <br>India<br>GSTIN 23AFEPG4029C1Z6
+                  </p>
+                  <p>
+                    Ph. : 0755-4204215, 9300049642<br>
+                    vidhangoyal@icloud.com<br>
+                    www.waterpurifierdealer.com
+                  </p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col l7">
+                  Sales Order Date: {{ selectedInvoiceDate}}
+
+                </div>
+                <div class="col l5">
+                  Bill To:
+                  {{customerName}}<br>
+                  Contact: {{customerContact}}
+                </div>
+              </div>
+
+              <table class="striped">
+                <thead style="color: white;background-color: black">
+                <tr>
+                  <th>Description</th>
+                  <th>Quantity</th>
+                  <th>Rate</th>
+                  <th>Discount</th>
+                  <th>Amount</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr *ngFor="let data of editInvoice">
+                  <td>{{data.item_name}}</td>
+                  <td>{{data.item_quantity}}</td>
+                  <td>{{data.item_rate}}</td>
+                  <td><div *ngIf="data.item_discount_type=='Rs.'" >Rs. {{data.item_discount}}</div>
+                    <div *ngIf="data.item_discount_type=='%'" >{{data.item_discount}} %</div>
+                    <div *ngIf="data.item_discount_type==''" >{{data.item_discount}}</div>
+                  </td>
+                  <td>{{data.item_amount}}</td>
+                </tr>
+                </tbody>
+              </table>
+              <br>
+              <div class="row">
+                <div class="col l6 m6 right">
+                  <div class="col m5 l5">
+                    Total:
+                  </div>
+                  <div class="col m4 l5 right">
+                    {{invoice_amount}}
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col l6 m6 right">
+                  <div class="col m5 l5">
+                    Shipping Charge:
+                  </div>
+                  <div class="col m4 l5 right">
+                    {{invoice_shippingcharge}}
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col l6 m6 right">
+                  <div class="col m5 l5">
+                    {{adjustmentName}}
+                  </div>
+                  <div class="col m4 l5 right">
+                    {{adjustmentValue}}
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col l6 m6 right">
+                  <div class="col m5 l5">
+                    Total
+                  </div>
+                  <div class="col m4 l5 right">
+                    {{invoice_amount+invoice_shippingcharge+adjustmentValue}}
+                  </div>
+                </div>
+              </div>
+
+
+            </div>
+          </div>
+
+
+
+
+
+          <div class="row">
+            Regards,<br>
+            Goyal Enterprises
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+
+    </div>
+    <div class="modal-footer">
+      <a (click)="mailInvoiceItem()" class="modal-action modal-close waves-effect waves-green btn-flat ">Send Mail</a>
+    </div>
+  </div>
+
+
+<!------------------------------------------------------!>
+<!--------------------------------------------------------->
+
+
+
+<!--<div id="printmodal" class="modal">-->
+  <!--<div class="modal-content">-->
+    <!--<iframe type="application/pdf"></iframe>-->
+  <!--</div>-->
+  <!--<div class="modal-footer">-->
+    <!--<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a>-->
+  <!--</div>-->
+<!--</div>-->
+
+
+

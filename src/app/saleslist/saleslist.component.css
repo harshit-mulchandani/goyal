@@ -1,0 +1,28 @@
+.textarea_dimensions{
+  height: 1220px;
+  border: 1px solid #ccc;
+  padding: 36px;
+
+
+}
+
+
+.header{
+  background-color: brown;
+  color: white;
+}
+
+.heading{
+  padding: 2%;
+}
+
+.hide{
+  display: none;
+}
+
+.center-text{
+  text-align: center;
+}
+.adjust_edit-badge{
+  margin-right: 35%;
+}

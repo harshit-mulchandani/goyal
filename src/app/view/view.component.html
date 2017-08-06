@@ -1,0 +1,176 @@
+<div class="row">
+  <div class="col s12 m4 l4 view-component__filter">
+    <label for="filter_role">Filter</label>
+    <select materialize="material_select" id="filter_role" (change)="roleSelect()">
+      <option value="" disabled selected>Select User</option>
+      <option value="whmanager">Warehouse Manager</option>
+      <option value="officeperson">Office Person</option>
+      <option value="marketingperson">Marketing Person</option>
+      <option value="customer">Customer</option>
+      <option value="warehouse">Warehouse</option>
+    </select>
+  </div>
+  <div class="col s12 m4 l4 view-component__search">
+    <label>Search</label>
+    <div id="demo-2">
+      <input type="search" placeholder="Search" [(ngModel)]="query">
+    </div>
+  </div>
+  <!--<button (click)="kaamkro()">Get Krna h!</button>-->
+  <div class="col s12 m12 l12 whTable">
+    <table>
+      <thead>
+      <tr>
+        <th *ngFor="let head of whTemplate | paginate: { itemsPerPage: 10, currentPage: p1, id: 'first' }">{{head}}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of whData">
+        <td>{{data.wh_id}}</td>
+        <td>{{data.wh_warehouse_name}}</td>
+        <td>{{data.wh_email}}</td>
+        <td>{{data.wh_address}}</td>
+        <td>{{data.wh_contact}}</td>
+      </tr>
+      </tbody>
+    </table>
+    <!--<div class="row">-->
+      <!--<div class="col offset-l9">-->
+        <!--<pagination-controls (pageChange)="p = $event" id="first"></pagination-controls>-->
+      <!--</div>-->
+
+    <!--</div>-->
+  </div>
+
+  <div class="col s12 m12 l12 whmanagerTable">
+    <table>
+      <thead>
+      <tr>
+        <th *ngFor="let head of whmanagerTemplate |  paginate: { itemsPerPage: 10, currentPage: p2}">{{head}}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of whmanagerData | search:'user_name,user_email,user_contact':query">
+        <td>{{data.user_name}}</td>
+        <td>{{data.user_email}}</td>
+        <td>{{data.user_address}}</td>
+        <td>{{data.user_contact}}</td>
+      </tr>
+      </tbody>
+    </table>
+    <!--<div class="row">-->
+      <!--<div class="col offset-l9">-->
+        <!--<pagination-controls (pageChange)="p2 = $event"></pagination-controls>-->
+      <!--</div>-->
+
+    <!--</div>-->
+  </div>
+
+
+  <div class="col s12 m12 l12 marketingPersonTable">
+    <table>
+      <thead>
+      <tr>
+        <th *ngFor="let head of marketingPersonTemplate |  paginate: { itemsPerPage: 10, currentPage: p3}">{{head}}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of marketingPersonData | search:'user_name,user_email':query">
+        <td>{{data.user_name}}</td>
+        <td>{{data.user_email}}</td>
+        <td>Warehouse {{data.user_warehouse | slice:-3}}</td>
+        <td>{{data.user_address}}</td>
+        <td>{{data.user_city}}</td>
+        <td>{{data.user_state}}</td>
+        <td>{{data.user_zipcode}}</td>
+        <td>{{data.user_country}}</td>
+        <td>{{data.user_contact}}</td>
+      </tr>
+      </tbody>
+    </table>
+    <!--<div class="row">-->
+      <!--<div class="col offset-l9">-->
+        <!--<pagination-controls (pageChange)="p3 = $event"></pagination-controls>-->
+      <!--</div>-->
+
+    <!--</div>-->
+  </div>
+
+
+  <div class="col s12 m12 l12 officePersonTable">
+    <table>
+      <thead>
+      <tr>
+        <th *ngFor="let head of officePersonTemplate |  paginate: { itemsPerPage: 10, currentPage: p4}">{{head}}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of officePersonData | search:'user_name,user_email':query">
+        <td>{{data.user_name}}</td>
+        <td>{{data.user_email}}</td>
+        <td>Warehouse {{data.user_warehouse | slice:-3}}</td>
+        <td>{{data.user_address}}</td>
+        <td>{{data.user_city}}</td>
+        <td>{{data.user_state}}</td>
+        <td>{{data.user_zipcode}}</td>
+        <td>{{data.user_country}}</td>
+        <td>{{data.user_contact}}</td>
+      </tr>
+      </tbody>
+    </table>
+    <!--<div class="row">-->
+      <!--<div class="col offset-l9">-->
+        <!--<pagination-controls (pageChange)="p4 = $event"></pagination-controls>-->
+      <!--</div>-->
+
+    <!--</div>-->
+
+  </div>
+
+  <div class="col s12 m12 l12 customerTable">
+    <table>
+      <thead>
+      <tr>
+        <th *ngFor="let head of customerTemplate |  paginate: { itemsPerPage: 10, currentPage: p5}">{{head}}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let data of customerData | search:'customer_name,customer_contact':query; let i = index">
+        <td>{{data.customer_name}}</td>
+        <td *ngIf="!customerData[i].customer_email == ''; else dash">{{customerData[i].customer_email}}</td>
+        <ng-template #dash>
+          <td><i class="material-icons">remove</i></td>
+        </ng-template>
+        <td *ngIf="!customerData[i].customer_address == ''; else dash">{{customerData[i].customer_address}}</td>
+        <ng-template #dash>
+          <td><i class="material-icons">remove</i></td>
+        </ng-template>
+        <td *ngIf="!customerData[i].customer_city == ''; else dash">{{customerData[i].customer_city}}</td>
+        <ng-template #dash>
+          <td><i class="material-icons">remove</i></td>
+        </ng-template>
+        <td *ngIf="!customerData[i].customer_state == ''; else dash">{{customerData[i].customer_state}}</td>
+        <ng-template #dash>
+          <td><i class="material-icons">remove</i></td>
+        </ng-template>
+        <td *ngIf="!customerData[i].customer_zipcode == ''; else dash">{{customerData[i].customer_zipcode}}</td>
+        <ng-template #dash>
+          <td><i class="material-icons">remove</i></td>
+        </ng-template>
+        <td *ngIf="!customerData[i].user_country == ''; else dash">{{customerData[i].user_country}}</td>
+        <ng-template #dash>
+          <td><i class="material-icons">remove</i></td>
+        </ng-template>
+        <td>{{data.customer_contact}}</td>
+      </tr>
+      </tbody>
+    </table>
+    <!--<div class="row">-->
+      <!--<div class="col offset-l9">-->
+        <!--<pagination-controls (pageChange)="p5 = $event"></pagination-controls>-->
+      <!--</div>-->
+
+    <!--</div>-->
+  </div>
+
+</div>
